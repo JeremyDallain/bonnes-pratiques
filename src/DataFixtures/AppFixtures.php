@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
+use App\Entity\User;
 use App\Entity\Article;
 use Bezhanov\Faker\Provider\Commerce;
 use Doctrine\Persistence\ObjectManager;
@@ -33,8 +34,7 @@ class AppFixtures extends Fixture
                 ->setSlug(strtolower($this->slugger->slug($article->getTitle())));
 
             $manager->persist($article);
-        }
-        
+        } 
 
         $manager->flush();
     }
