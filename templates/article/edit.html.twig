@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Édition d'un article{% endblock %}
+
+{% block body %}
+    <h1>Édition de l'article {{ article.id }}  : {{ article.title }}</h1>
+
+    {{ form_start(formView) }}
+
+    {{ form_widget(formView) }}
+    
+    {{ form_errors(formView) }}
+         
+        <button type="submit" class="btn btn-success">
+            Éditer l'article
+        </button>
+            
+    {{ form_end(formView) }}
+    <a class="btn btn-sm btn-danger" href="{{ path('article_delete', {'id': article.id}) }}">Supprimer</a>
+{% endblock %}

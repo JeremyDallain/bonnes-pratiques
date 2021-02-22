@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article #{% endblock %}
+
+{% block body %}
+    <h1>Article {{ article.id }} : {{ article.title }}</h1>
+   
+    <div class="border m-2 p-2">
+        <h3>{{ article.title }}</h3>
+        <p>{{ article.content }}</p>
+        <em>édité le {{ article.createdAt | date('d/m/Y') }} à {{ article.createdAt | date('H') }}h</em>
+        <a class="btn btn-sm btn-warning" href="{{ path('article_edit', {'id': article.id}) }}">Editer</a>
+        <a class="btn btn-sm btn-danger" href="{{ path('article_delete', {'id': article.id}) }}">Supprimer</a>
+    </div>
+    
+{% endblock %}
