@@ -42,6 +42,11 @@ class Article
      */
     private $slug;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="articles")
+     */
+    private $user;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +96,18 @@ class Article
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
+use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,16 +81,20 @@ class ArticleController extends AbstractController
     /**
      * @Route("/article/create", name="article_create")
      */
-    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
+    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em, UserRepository $userRepository)
     {
         $article = new Article;
 
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
+        $user = $this->getUser();
+        
+
         if($form->isSubmitted() && $form->isValid()) {
             $article->setSlug(strtolower($slugger->slug($article->getTitle())));
-            $article->setCreatedAt(new DateTime());
+            $article->setCreatedAt(new DateTime())
+                ->setUser($user);
 
             $em->persist($article);            
             $em->flush();
