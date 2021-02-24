@@ -3,7 +3,7 @@
 {% block title %}Liste des articles{% endblock %}
 
 {% block body %}
-    <h1>Liste des articles :<a class="btn btn-sm btn-success" href="{{ path('article_create') }}">Nouvel article</a></h1>
+    <h1>Liste des articles<a class="btn btn-sm btn-success" href="{{ path('article_create') }}">Nouvel article</a></h1>
 
     {% for article in articles %}
         <div class="border m-2 p-2">
