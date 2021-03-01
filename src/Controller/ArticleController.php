@@ -72,11 +72,15 @@ class ArticleController extends AbstractController
      */
     public function edit($id, Request $request, SluggerInterface $slugger, EntityManagerInterface $em, ArticleRepository $articleRepository)
     {
+        
         $article = $articleRepository->find($id);
 
+        
         if (!$article) {
             throw $this->createNotFoundException("l'article demandé n'existe pas!");
         }
+
+        $this->denyAccessUnlessGranted('CAN_EDIT', $article, "Vous n'êtes pas le proprietaire de cet article, vous ne pouvez pas l'éditer");
         
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
@@ -138,6 +142,8 @@ class ArticleController extends AbstractController
         if (!$article) {
             throw $this->createNotFoundException("l'article demandé n'existe pas!");
         }
+
+        $this->denyAccessUnlessGranted('CAN_DELETE', $article, "Vous n'êtes pas le proprietaire de cet article, vous ne pouvez pas le supprimer");
 
         $em->remove($article);
         $em->flush();
