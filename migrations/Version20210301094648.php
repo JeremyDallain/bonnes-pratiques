@@ -26,6 +26,6 @@ final class Version20210301094648 extends AbstractMigration
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user CHANGE roles roles JSON NOT NULL');
+        $this->addSql('ALTER TABLE user CHANGE roles roles LONGTEXT NOT NULL');
     }
 }

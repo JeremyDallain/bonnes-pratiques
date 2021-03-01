@@ -23,7 +23,7 @@ final class Version20210224125910 extends AbstractMigration
         $this->addSql('ALTER TABLE article ADD user_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE article ADD CONSTRAINT FK_23A0E66A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
         $this->addSql('CREATE INDEX IDX_23A0E66A76ED395 ON article (user_id)');
-        $this->addSql('ALTER TABLE user CHANGE roles roles JSON NOT NULL');
+        $this->addSql('ALTER TABLE user CHANGE roles roles LONGTEXT NOT NULL');
     }
 
     public function down(Schema $schema) : void
