@@ -8,6 +8,7 @@ use App\Form\ArticleType;
 use App\Repository\UserRepository;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,13 +21,18 @@ class ArticleController extends AbstractController
     /**
      * @Route("/", name="homepage")
      */
-    public function index(ArticleRepository $articleRepository)
+    public function index(PaginatorInterface $paginator, Request $request, ArticleRepository $articleRepository)
     {
         
-        $articles = $articleRepository->findAll();
+        $donnees = $articleRepository->findAll();
         // $articles = $articleRepository->findByDateBefore(new DateTime());
 
-        dump($articles);
+
+        $articles = $paginator->paginate(
+            $donnees, // mes datas
+            $request->query->getInt('page', 1), // numero de la page en cours
+            4
+        ); 
 
         return $this->render('article/index.html.twig', [
             'articles' => $articles

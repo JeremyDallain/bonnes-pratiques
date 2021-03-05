@@ -7,6 +7,7 @@
         "php": ">=7.2.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "knplabs/knp-paginator-bundle": "^5.4",
         "mbezhanov/faker-provider-collection": "^2.0",
         "symfony/apache-pack": "^1.0",
         "symfony/console": "5.2.*",
