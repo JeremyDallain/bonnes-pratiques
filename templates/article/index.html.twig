@@ -12,7 +12,9 @@
             <h3>{{ article.title }}</h3>
             <p>{{ article.content }}</p>
             <em>édité le {{ article.createdAt | date('d/m/Y') }} à {{ article.createdAt | date('H') }}h</em>
-            <p>par {{ article.user.fullName }}</p>
+            {% if article.user %}
+                <p>par {{ article.user.fullName }}</p>
+            {% endif %}
             <a class="btn btn-sm btn-primary" href="{{ path('article_show', {'id': article.id}) }}">Voir</a>
         </div>
     {% endfor %}

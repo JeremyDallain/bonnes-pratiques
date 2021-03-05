@@ -7,7 +7,7 @@
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
-            
+            <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
         {% endblock %}
 
     </head>
@@ -19,7 +19,14 @@
 
         {{ encore_entry_script_tags('app') }}
         {% block javascripts %}
-            
+            <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+            <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js"></script>            
+            <script>
+                $(document).ready( function () {
+                    $('#table_id').DataTable();
+                } );
+            </script>
         {% endblock %}
     </body>
 </html>
