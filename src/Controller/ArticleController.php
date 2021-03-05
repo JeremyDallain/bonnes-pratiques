@@ -23,7 +23,8 @@ class ArticleController extends AbstractController
     public function index(ArticleRepository $articleRepository)
     {
         
-        $articles = $articleRepository->findAll();
+        // $articles = $articleRepository->findAll();
+        $articles = $articleRepository->findByDateBefore(new DateTime());
 
         return $this->render('article/index.html.twig', [
             'articles' => $articles
