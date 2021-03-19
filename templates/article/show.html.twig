@@ -7,7 +7,7 @@
    
     <div class="border m-2 p-2">
         <h3>{{ article.title }}</h3>
-        <p>{{ article.content }}</p>
+        <p>{{ article.content|raw  }}</p>
         <em>édité le {{ article.createdAt | date('d/m/Y') }} à {{ article.createdAt | date('H') }}h</em>
         {% if article.user %}
             <p>par {{ article.user.fullName }}</p>
@@ -16,6 +16,14 @@
             <a class="btn btn-sm btn-warning" href="{{ path('article_edit', {'id': article.id}) }}">Editer</a>
             <a class="btn btn-sm btn-danger" href="{{ path('article_delete', {'id': article.id}) }}">Supprimer</a>
         {% endif %}
+    </div>
+
+    <div class="text-center">
+        <a title="article précedent : {{ prevArticle.title }}" href="{{ path('article_show', {'id': prevArticle.id}) }}"><i class="fas fa-arrow-circle-left fa-2x"></i></a>
+        <span>Article précedent</span>
+         --- 
+        <span>Article suivant</span>
+        <a title="article suivant : {{ nextArticle.title }}" href="{{ path('article_show', {'id': nextArticle.id}) }}"><i class="fas fa-arrow-circle-right fa-2x"></i></a>      
     </div>
     
 {% endblock %}

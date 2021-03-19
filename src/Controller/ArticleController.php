@@ -34,9 +34,20 @@ class ArticleController extends AbstractController
             4
         ); 
 
+        
+
         return $this->render('article/index.html.twig', [
             'articles' => $articles
         ]);
+    }
+
+
+    /**
+     * @Route("/like", name="like")
+     */
+    public function like()
+    {
+        return $this->json(['code' => 200, 'message' => "ca marche bien"], 200);
     }
 
     
@@ -51,6 +62,8 @@ class ArticleController extends AbstractController
         if (!$articles) {
             throw $this->createNotFoundException("les articles demandés n'existe pas!");
         }
+
+        
 
         // dd($articles);
         
@@ -70,10 +83,34 @@ class ArticleController extends AbstractController
         if (!$article) {
             throw $this->createNotFoundException("l'article demandé n'existe pas!");
         }
+
+
+        // GESTION ARTICLE PRECEDENT ET ARTICLE SUIVANT
+
+        $articles = $articleRepository->findAll();        
+        $nombreArticles = count($articles);
+
+        foreach ($articles as $key => $value) {    
+            if ($value->getId() == $id) {
+                //article precedent
+                $i = $key === 0 ? $nombreArticles - 1 : $key - 1;
+                $prevArticle = $articles[$i];
+                dump($prevArticle);
+                //article suivant
+                $j = $key === $nombreArticles - 1 ? 0 : $key + 1;
+                $nextArticle = $articles[$j];      
+                dump($nextArticle);  
+                break; 
+            }
+        }
+
+        // FIN GESTION ARTICLE PRECEDENT ET ARTICLE SUIVANT
         
         return $this->render('article/show.html.twig', [
-            'article' => $article
-            ]);
+            'article' => $article,
+            'nextArticle' => $nextArticle,
+            'prevArticle' => $prevArticle
+        ]);
     }
     
     /**
@@ -169,4 +206,6 @@ class ArticleController extends AbstractController
     {
         return $this->render('home/admin.html.twig');
     }
+
+
 }

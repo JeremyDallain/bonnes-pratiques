@@ -9,7 +9,7 @@
         {% for article in articles %}
             <div class="border border-primary m-2 p-2">
                 <h3>{{ article.title }}</h3>
-                <p>{{ article.content }}</p>
+                <p>{{ article.content|raw }}</p>
                 <em>édité le {{ article.createdAt | date('d/m/Y') }} à {{ article.createdAt | date('H') }}h</em><br>
                 <a class="btn btn-sm btn-primary" href="{{ path('article_show', {'id': article.id}) }}">Voir</a>
                 <a class="btn btn-sm btn-warning" href="{{ path('article_edit', {'id': article.id}) }}">Editer</a>
