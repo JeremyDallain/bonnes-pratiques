@@ -23,7 +23,7 @@ class ArticleController extends AbstractController
      */
     public function index(PaginatorInterface $paginator, Request $request, ArticleRepository $articleRepository)
     {
-        
+
         $donnees = $articleRepository->findAll();
         // $articles = $articleRepository->findByDateBefore(new DateTime());
 
@@ -32,9 +32,9 @@ class ArticleController extends AbstractController
             $donnees, // mes datas
             $request->query->getInt('page', 1), // numero de la page en cours
             4
-        ); 
+        );
 
-        
+
 
         return $this->render('article/index.html.twig', [
             'articles' => $articles
@@ -50,36 +50,36 @@ class ArticleController extends AbstractController
         return $this->json(['code' => 200, 'message' => "ca marche bien"], 200);
     }
 
-    
+
     /**
      * @Route("/article", name="article")
      */
     public function article()
     {
-        
+
         $articles = $this->getUser()->getArticles();
 
         if (!$articles) {
             throw $this->createNotFoundException("les articles demandés n'existe pas!");
         }
 
-        
+
 
         // dd($articles);
-        
+
         return $this->render('article/article.html.twig', [
             'articles' => $articles
         ]);
     }
-    
+
     /**
      * @Route("/article/show/{id}", name="article_show")
      */
     public function show($id, ArticleRepository $articleRepository)
     {
-        
+
         $article = $articleRepository->find($id);
-        
+
         if (!$article) {
             throw $this->createNotFoundException("l'article demandé n'existe pas!");
         }
@@ -87,10 +87,10 @@ class ArticleController extends AbstractController
 
         // GESTION ARTICLE PRECEDENT ET ARTICLE SUIVANT
 
-        $articles = $articleRepository->findAll();        
+        $articles = $articleRepository->findAll();
         $nombreArticles = count($articles);
 
-        foreach ($articles as $key => $value) {    
+        foreach ($articles as $key => $value) {
             if ($value->getId() == $id) {
                 //article precedent
                 $i = $key === 0 ? $nombreArticles - 1 : $key - 1;
@@ -98,93 +98,132 @@ class ArticleController extends AbstractController
                 dump($prevArticle);
                 //article suivant
                 $j = $key === $nombreArticles - 1 ? 0 : $key + 1;
-                $nextArticle = $articles[$j];      
-                dump($nextArticle);  
-                break; 
+                $nextArticle = $articles[$j];
+                dump($nextArticle);
+                break;
             }
         }
 
         // FIN GESTION ARTICLE PRECEDENT ET ARTICLE SUIVANT
-        
+
         return $this->render('article/show.html.twig', [
             'article' => $article,
             'nextArticle' => $nextArticle,
             'prevArticle' => $prevArticle
         ]);
     }
-    
+
     /**
      * @Route("/article/edit/{id}", name="article_edit")
      */
     public function edit($id, Request $request, SluggerInterface $slugger, EntityManagerInterface $em, ArticleRepository $articleRepository)
     {
-        
+
         $article = $articleRepository->find($id);
 
-        
+
         if (!$article) {
             throw $this->createNotFoundException("l'article demandé n'existe pas!");
         }
 
         $this->denyAccessUnlessGranted('CAN_EDIT', $article, "Vous n'êtes pas le proprietaire de cet article, vous ne pouvez pas l'éditer");
-        
+
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
-        
-        if($form->isSubmitted() && $form->isValid()) {
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $article->setSlug(strtolower($slugger->slug($article->getTitle())));
-            
-            $em->persist($article);            
+
+            $em->persist($article);
             $em->flush();
-            
+
             return $this->redirectToRoute('article');
         }
-        
+
         $formView = $form->createView();
-        
+
         return $this->render('article/edit.html.twig', [
             'formView' => $formView,
             'article' => $article
-            ]);
-        }
-        
-        /**
+        ]);
+    }
+
+    /**
      * @Route("/article/create", name="article_create")
      */
     public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
     {
         $article = new Article;
-        
+
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
-        
+
         $user = $this->getUser();
-                
-        if($form->isSubmitted() && $form->isValid()) {
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            //image par defaut 
+            $article->setPicture('img-0.jpg');
+
+            $picture = $form->get('picture')->getData();
+            
+            if ($picture !== null) {
+
+                //verif type
+                $picType = $picture->getMimeType();
+                if ($picType !== "image/jpeg" && $picType !== "image/png" && $picType !== "image/gif") {
+                    $this->addFlash('success', 'le format : "'. $picType .'" n\'est pas accepté.');
+                    
+                    return $this->render('article/create.html.twig', [
+                        'formView' => $form->createView()
+                    ]);
+                }
+
+                //verif taille           
+                $limitSize = 2000000;
+                if ($picture->getSize() > $limitSize) {
+                    $this->addFlash('success', 'taille trop grande => sup a '.($limitSize / 1000).' Ko.');
+                    return $this->render('article/create.html.twig', [
+                        'formView' => $form->createView()
+                    ]);
+                }
+
+                // le nom du fichier
+                $file = 'img-'.mt_rand(1, 9999999).'.'.$picture->guessExtension();
+
+                // on deplace le fichier dans son dossier
+                $picture->move(
+                    $this->getParameter('images_directory'),
+                    $file
+                );
+                // on rajoute le fichier dans l'objet article
+                $article->setPicture($file);
+            }            
+
+
             $article->setSlug(strtolower($slugger->slug($article->getTitle())))
                 ->setCreatedAt(new DateTime())
                 ->setUser($user);
-            
-            $em->persist($article);            
+
+            $em->persist($article);
             $em->flush();
-            
+
             return $this->redirectToRoute('article');
         }
-        
-        $formView = $form->createView();
-        
+
+
         return $this->render('article/create.html.twig', [
-            'formView' => $formView
+            'formView' => $form->createView()
         ]);
     }
-    
+
     /**
      * @Route("/article/delete/{id}", name="article_delete")
      */
     public function delete($id, EntityManagerInterface $em, ArticleRepository $articleRepository)
     {
         $article = $articleRepository->find($id);
-        
+
         if (!$article) {
             throw $this->createNotFoundException("l'article demandé n'existe pas!");
         }
@@ -193,7 +232,7 @@ class ArticleController extends AbstractController
 
         $em->remove($article);
         $em->flush();
-        
+
         return $this->redirectToRoute('article');
     }
 
@@ -206,6 +245,4 @@ class ArticleController extends AbstractController
     {
         return $this->render('home/admin.html.twig');
     }
-
-
 }

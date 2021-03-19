@@ -4,13 +4,14 @@
 
 {% block body %}
     <h1>Création d'un article</h1>
-
+    {{ dump(app.flashes) }}
     {{ form_start(formView, {'attr': {'id': 'form_creation'}}) }}
 
     {# {{ form_widget(formView) }} #}
 
     {{ form_row(formView.title, {'id': 'form_title'}) }}
     {{ form_row(formView.content, {'id': 'form_content'}) }}
+    {{ form_row(formView.picture, {'id': 'form_picture'}) }}
     
     {{ form_errors(formView) }}
          

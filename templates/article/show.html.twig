@@ -12,6 +12,9 @@
         {% if article.user %}
             <p>par {{ article.user.fullName }}</p>
         {% endif %}
+        <div>
+            <img src="/uploads/{{ article.picture }}" alt="{{ article.title }}">
+        </div>
         {% if app.user and app.user.id == article.user.id %}
             <a class="btn btn-sm btn-warning" href="{{ path('article_edit', {'id': article.id}) }}">Editer</a>
             <a class="btn btn-sm btn-danger" href="{{ path('article_delete', {'id': article.id}) }}">Supprimer</a>
